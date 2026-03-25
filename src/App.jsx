@@ -28,7 +28,7 @@ function App() {
  <Route path='resetpassword' element={<ResetPassword/>} />
  <Route path='updatepassword' element={<UpdatePassword/>} />
  <Route path='userselection' element={<UserSelection/>} />
- {/* <Route path='header' element={<Header/>} /> */}
+ <Route path='header' element={<Header/>} />
  {/* <Route path='footer' element={<Footer/>} /> */}
  <Route path='homescreen' element={
   <>
