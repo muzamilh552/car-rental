@@ -1,7 +1,10 @@
 import React from 'react';
 import car from './SignIn/car.png'
+import { useNavigate } from 'react-router-dom';
 
 const UserSelection = () => {
+    const navigate = useNavigate();
+
     return (
         <>
             <div className="flex justify-center min-h-screen max-sm:flex-col">
@@ -14,10 +17,14 @@ const UserSelection = () => {
 
                 <div className="flex flex-col justify-center items-center w-full px-24 relative max-sm:mt-12">
                     <div className="flex justify-center items-center">
-                        <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-41 py-2 cursor-pointer max-sm:px-40'>Rent a Car</button>
+                        <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-41 py-2 cursor-pointer max-sm:px-40' onClick={() => {
+                            navigate("/signup");
+                        }}>Rent a Car</button>
                     </div>
                     <div className="flex justify-center items-center mt-12">
-                        <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-34 py-2 cursor-pointer max-sm:px-34'>Own a Showroom</button>
+                        <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-34 py-2 cursor-pointer max-sm:px-34' onClick={() => {
+                            navigate("/signup");
+                        }}>Own a Showroom</button>
                     </div>
                 </div>
 

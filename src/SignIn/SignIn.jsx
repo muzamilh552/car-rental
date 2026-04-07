@@ -3,19 +3,96 @@ import car from '../SignIn/car.png'
 import { MdOutlineEmail } from "react-icons/md";
 import { LuEyeOff } from "react-icons/lu";
 import { useNavigate } from 'react-router-dom';
+import { EndPoint, BACKENDURL } from "../Utils/RoutePaths";
+import LoadingIcons from "react-loading-icons";
+import axios from 'axios';
+import { useFormik } from 'formik';
+import { loginSchema } from '../schemas';
+import { toast } from 'react-toastify';
+
+
+const initialValues = {
+    email: "",
+    password: "",
+}
+
 const SignIn = () => {
+
+    const { values, errors, handleBlur, touched, handleChange, handleSubmit } = useFormik({
+        initialValues: initialValues,
+        validationSchema: loginSchema,
+        onSubmit: (values, action) => {
+            const postData = {
+                email: values.email,
+                password: values.password,
+            };
+            handleSignInForm(postData, action)
+
+        }
+    })
+
     const navigate = useNavigate();
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    // const [email, setEmail] = useState("")
+    // const [password, setPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
-    const SignInFormSubmit = (evt) => {
-        evt.preventDefault();
-        console.log("email", email)
-        console.log("password", password)
+    // const SignInFormSubmit = (evt) => {
+    //     evt.preventDefault();
+    //     handleSignInForm();
+    //     console.log("email", email)
+    //     console.log("password", password)
 
-        setEmail("")
-        setPassword("")
-    }
+
+    // }
+
+    const handleSignInForm = async (postData, action) => {
+        // const postData = {
+        //     email: email,
+        //     password: password,
+        // };
+        console.log("postData", postData);
+        setIsLoading(true);
+        try {
+            const response = await axios.post(
+                BACKENDURL + EndPoint.login,
+                postData,
+            );
+            // console.log("Responses login data:", response);
+            localStorage.setItem("Token", response.data.token);
+            const token = localStorage.getItem("Token");
+
+            if (token) {
+
+                localStorage.setItem("email", postData.email);
+                localStorage.setItem("Name", postData.password);
+                action.resetForm();
+               
+// Invalid Email or Password
+// User Not Found
+                 navigate("/homescreen");
+                  toast.success("Login successful.", {
+                    theme: "dark",
+                    type: "success",
+                    autoClose: 3000,
+
+                })
+            } else {
+                alert(response.data.message);
+            }
+        } catch (error) {
+             console.log("Error...", error.response?.data);
+    
+
+            toast.error("Invalid email or password.", {
+                theme: "dark",
+                autoClose: 3000,
+            })
+
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <>
@@ -52,32 +129,51 @@ const SignIn = () => {
 
                 <div className="flex flex-col justify-center w-full gap-6 px-24 py-16 relative">
                     <h1 className='font-["Plus_Jakarta_Sans"] text-[#18345E] font-bold text-5xl leading-12'>Sign In</h1>
-                    <form action="" onSubmit={(evt) => {
-                        SignInFormSubmit(evt)
-                    }}>
+                    <form action="" onSubmit={handleSubmit}>
                         <div className="flex flex-col mt-4 relative">
                             <label className='text-[#18345E] font-normal text-base leading-6 font-["Plus_Jakarta_Sans"]' htmlFor="email">Email</label>
-                            <input className='bg-[#F4F2F2] p-2 rounded-xs' type="text" id='email' value={email} placeholder='johndoe@gmail.com' onChange={(evt) => {
-                                setEmail(evt.target.value)
-                            }} />
+                            <input className='bg-[#F4F2F2] p-2 rounded-xs' type="text" id='email' name='email' value={values.email} placeholder='johndoe@gmail.com'
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            />
                             <MdOutlineEmail className='absolute right-2 top-9' />
+                            {errors.email && touched.email ? (<p className='text-red-500 text-sm'>{errors.email}</p>) : null}
                         </div>
                         <div className="flex flex-col mt-6 relative">
                             <label className='text-[#18345E] font-normal text-base leading-6 font-["Plus_Jakarta_Sans"]' htmlFor="password">Password</label>
-                            <input className='bg-[#F4F2F2] p-2 rounded-xs' type="text" id='password' value={password} placeholder='.........' onChange={(evt) => {
-                                setPassword(evt.target.value)
-                            }} />
-                            <LuEyeOff className='absolute right-2 top-9' />
+                            <input className='bg-[#F4F2F2] p-2 rounded-xs' type={showPassword ? "text" : "password"} id='password' value={values.password} placeholder='.........' onChange={handleChange}
+                                onBlur={handleBlur}
+                            />
+                            {errors.password && touched.password ? (<p className='text-red-500 text-sm'>{errors.password}</p>) : null}
+                            {/* <LuEyeOff className='absolute right-2 top-9' /> */}
+                            <img
+                                onClick={() => {
+                                    setShowPassword(!showPassword);
+                                }}
+                                className="absolute top-4 right-0 m-[2vmin] w-[24px] h-[24px] cursor-pointer"
+                                src={
+                                    showPassword
+                                        ? "https://car-rantal-mauve.vercel.app/assets/logo/eye-slash.2.svg"
+                                        : "https://car-rantal-mauve.vercel.app/assets/logo/eye.3.svg"
+                                }
+                                alt=""
+                            />
                         </div>
                         <div className="flex justify-end my-4">
-                            <button className='text-[#FF5C00] underline cursor-pointer'>Forgotten Password</button>
+                            <button className='text-[#FF5C00] underline cursor-pointer' type='button' onClick={() => {
+                                navigate("/resetpassword")
+                            }}>Forgotten Password</button>
                         </div>
                         <div className="flex justify-center items-center my-4">
-                            <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold w-full py-2 cursor-pointer' >Sign In</button>
+                            <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold w-full py-2 cursor-pointer' disabled={isLoading} type='submit' >{isLoading ? (
+                                <LoadingIcons.ThreeDots className="ml-6" />
+                            ) : (
+                                "Sign In"
+                            )}</button>
                         </div>
                         <div className="flex justify-center ">
-                            <h1 className='text-[#312E81CC]'>Don't have an account? <button className='text-[#FF5C00] cursor-pointer' onClick={()=> {
-                                navigate("/signup");
+                            <h1 className='text-[#312E81CC]'>Don't have an account? <button className='text-[#FF5C00] cursor-pointer' type='button' onClick={() => {
+                                navigate("/userselection");
                             }}>Sign Up</button></h1>
                         </div>
                     </form>

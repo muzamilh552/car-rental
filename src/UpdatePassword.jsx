@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import car from './SignIn/car.png'
 import { LuEyeOff } from "react-icons/lu";
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { EndPoint, BACKENDURL } from "./Utils/RoutePaths";
 
 const UpdatePassword = () => {
     const navigate = useNavigate();
@@ -10,10 +12,31 @@ const UpdatePassword = () => {
 
     const upDatePasswordForm = (evt) => {
         evt.preventDefault();
+        upDatePassword();
         console.log("Password", password)
         console.log("ConfPassword", confPassword)
         setPassword("")
         setConfPassword("")
+
+    }
+
+    const upDatePassword = async () => {
+        
+        const postData = {
+            password:password,
+            confPassword: confPassword,
+
+        }
+        try {
+       const response = await axios.post(BACKENDURL+ EndPoint.forgotpassword);
+console.log("Forget Data Value",response.data); 
+                                navigate("/mailverification")
+
+        } catch (error) {
+            console.log("Wrong Error",error);
+
+        }
+
 
     }
 
@@ -37,15 +60,15 @@ const UpdatePassword = () => {
                         <div className="flex  justify-between gap-4 max-sm:flex-col">
                             <div className="flex flex-col mt-6 relative max-sm:w-102">
                                 <label className='text-[#18345E] font-normal text-base leading-6 font-["Plus_Jakarta_Sans"]' htmlFor="password">Password</label>
-                                <input className='bg-[#F4F2F2] p-2 rounded-xs' type="text" id='password' value={password} placeholder='.........' onChange={(evt) => {
+                                <input className='bg-[#F4F2F2] p-2 rounded-xs' type="text" name='password' id='password' value={password} placeholder='.........' onChange={(evt) => {
                                     setPassword(evt.target.value)
                                 }} />
                                 <LuEyeOff className='absolute right-2 top-9' />
                             </div>
 
                             <div className="flex flex-col mt-6 relative">
-                                <label className='text-[#18345E] font-normal text-base leading-6 font-["Plus_Jakarta_Sans"]' htmlFor="confpassword">Confirm Password</label>
-                                <input className='bg-[#F4F2F2] p-2 rounded-xs ' type="text" id='confpassword' value={password} placeholder='.........' onChange={(evt) => {
+                                <label className='text-[#18345E] font-normal text-base leading-6 font-["Plus_Jakarta_Sans"]' htmlFor="confPassword">Confirm Password</label>
+                                <input className='bg-[#F4F2F2] p-2 rounded-xs ' type="text" id='confPassword' name='confPassword' value={confPassword} placeholder='.........' onChange={(evt) => {
                                     setConfPassword(evt.target.value)
                                 }} />
                                 <LuEyeOff className='absolute right-2 top-9' />
@@ -53,9 +76,7 @@ const UpdatePassword = () => {
                         </div>
 
                         <div className="flex justify-center items-center mt-12">
-                            <button className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-42 py-2 cursor-pointer max-sm:px-32' onClick={() => {
-                                navigate("/userselection")
-                            }}>Update Password</button>
+                            <button type='submit' className='bg-[#FF5C00] flex justify-center items-center rounded-sm  text-[#FFFFFF] text-base font-bold px-42 py-2 cursor-pointer max-sm:px-32' >Update Password</button>
                         </div>
                     </form>
                 </div>
