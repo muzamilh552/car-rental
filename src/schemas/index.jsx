@@ -49,3 +49,16 @@ export const loginSchema = Yup.object({
         )
         .required("Please enter your password"),  
 })
+
+export const UpDatePassword = Yup.object({
+       password: Yup.string()
+        .matches(
+            passwordRegex,
+            "Password must be at least 8 characters, include uppercase, lowercase, number, and special character"
+        )
+        .required("Please enter your password"),
+
+    confPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Please confirm your password"),  
+})

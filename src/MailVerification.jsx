@@ -73,6 +73,7 @@ const response = await axios.post(BACKENDURL + EndPoint.verify, { token: finalOT
     "email":localStorage.getItem("ForgetEmail"),
     "subject":"Resent OTP",
 });
+console.log("Response:",response);
         toast.success(`OTP is send to ${localStorage.getItem("email")} Successfully, Check your email`);
     } catch (error) {
         toast.error(error.message ?? error.response.data.message ?? "OTP Resent Failed");

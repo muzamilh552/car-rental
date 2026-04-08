@@ -67,11 +67,11 @@ const SignIn = () => {
                 localStorage.setItem("email", postData.email);
                 localStorage.setItem("Name", postData.password);
                 action.resetForm();
-               
-// Invalid Email or Password
-// User Not Found
-                 navigate("/homescreen");
-                  toast.success("Login successful.", {
+
+                // Invalid Email or Password
+                // User Not Found
+                navigate("/homescreen");
+                toast.success("Login successful.", {
                     theme: "dark",
                     type: "success",
                     autoClose: 3000,
@@ -81,8 +81,8 @@ const SignIn = () => {
                 alert(response.data.message);
             }
         } catch (error) {
-             console.log("Error...", error.response?.data);
-    
+            console.log("Error...", error.response?.data);
+
 
             toast.error("Invalid email or password.", {
                 theme: "dark",

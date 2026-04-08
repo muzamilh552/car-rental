@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import hondacar from '../src/hondacar.png'
 import showroom from '../src/showroom.png'
+import { EndPoint, BACKENDURL } from "./Utils/RoutePaths";
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 
 const HomeScreen = () => {
+    const navigate = useNavigate();
+    const [showRoomData, setShowRoomData] = useState("");
+
+    const showRoomCars = useCallback(async () => {
+        const token = localStorage.getItem("Token");
+
+        try {
+
+            const response = await axios.get(BACKENDURL + EndPoint.showroomcars, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            console.log("Show Cars Data", response);
+            setShowRoomData(response?.data?.data);
+            toast.success("Showrooms retrieved successfully!", 3000);
+
+        } catch (error) {
+            toast.error(error.message ?? error.response.data.message ?? error);
+        }
+
+    }, [])
+
+    useEffect(() => {
+        showRoomCars();
+
+    }, [showRoomCars])
+
     return (
         <>
             <div className="flex mt-7">
@@ -69,6 +102,7 @@ const HomeScreen = () => {
 
                     </div>
                     <div className="flex gap-6  ml-14 mb-7 flex-wrap">
+
                         <div className="flex flex-col p-3 gap-3 bg-[#FFFFFF] w-76 h-auto rounded-xl">
                             <div className="flex justify-around items-center ">
                                 <h1 className='font-bold font-["Plus_Jakarta_Sans"] text-[#1A202C] text-xl '>Nissan GT - R</h1>
@@ -222,6 +256,35 @@ const HomeScreen = () => {
                     {/* Car Show Room */}
                     <h1 className='text-[#90A3BF] font-semibold text-base px-14 pb-7'>Showroom  Car</h1>
                     <div className="flex gap-6  ml-14 mb-7 flex-wrap">
+                        {
+                            showRoomData && showRoomData.map((showroom, key) => {
+                                return (
+                                    <div className="flex flex-col p-3 gap-3 bg-[#FFFFFF] w-76 h-auto rounded-xl relative">
+                                        <div className="flex absolute right-6 top-5 ">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="red" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M12.62 20.8101C12.28 20.9301 11.72 20.9301 11.38 20.8101C8.48 19.8201 2 15.6901 2 8.6901C2 5.6001 4.49 3.1001 7.56 3.1001C9.38 3.1001 10.99 3.9801 12 5.3401C13.01 3.9801 14.63 3.1001 16.44 3.1001C19.51 3.1001 22 5.6001 22 8.6901C22 15.6901 15.52 19.8201 12.62 20.8101Z" stroke="#90A3BF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+
+                                        </div>
+                                        <img className='' src={showroom.showRoomPicture} alt="" />
+                                        <div className="flex flex-col gap-2">
+                                            <p className='text-[#666666] font-bold text-sm font-["Plus_Jakarta_Sans"]'>{showroom.showRoomName}</p>
+                                            <p className='text-[#666666] font-bold text-sm font-["Plus_Jakarta_Sans"]'>Location: <span className='text-[#90A3BF]'>{showroom.location}</span></p>
+                                            <p className='text-[#666666]  font-bold text-sm font-["Plus_Jakarta_Sans"]'>Available cars: <span className='text-[#90A3BF] '>{showroom.carCount}</span></p>
+
+                                        </div>
+
+                                        <div className="flex justify-end">
+                                            <button className='bg-[#FF5C00] text-white font-semibold text-base flex justify-center items-center rounded-sm px-5 py-1 cursor-pointer' onClick={() => {
+                                                navigate("/mobiledetails", { state: { showroomid: showroom.id } })
+                                            }}>View</button>
+
+
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
                         <div className="flex flex-col p-3 gap-3 bg-[#FFFFFF] w-76 h-auto rounded-xl relative">
                             <div className="flex absolute right-6 top-5 ">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="red" xmlns="http://www.w3.org/2000/svg">

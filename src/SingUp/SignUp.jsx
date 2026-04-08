@@ -83,7 +83,7 @@ const SignUp = () => {
       }
     } catch (error) {
       // console.log("Error", error.response?.data);
-        toast.info(error.message ?? error ?? "OTP Send Error", {theme: "dark", autoClose: 3000})
+      toast.info(error.message ?? error ?? "OTP Send Error", { theme: "dark", autoClose: 3000 })
     } finally {
       setIsLoading(false);
     }
@@ -280,7 +280,7 @@ const SignUp = () => {
                   id="password"
                   name="password"
                   // value={password}
-                  placeholder="........."
+                  placeholder="*******"
                   // onChange={(evt) => {
                   //   setPassword(evt.target.value);
                   // }}
